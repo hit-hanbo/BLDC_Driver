@@ -19,37 +19,27 @@ uint8_t Rotate_Direct = 0;
 uint8_t Current_State = 0;
 
 void SysTick_Init(uint32_t LOAD);
-void delay(void);
 
 int main(void)
 {
-	SysTick_Init(10000);
+	SysTick_Init(50000);
 	LED_Init();
-	COMP1_Init();
-	COMP_A_PHASE;
-	TIM2_Init(16, 999);
-	TIM2->CCR1 = 750;
-	TIM2->CCR2 = 500;
-	TIM2->CCR3 = 250;
-	TIM2_PWM_Start();
-	while(1);
-	/*{
-		delay();
-		Change_Phase();
-		delay();
-	}*/
-}
 
-void delay(void)
-{
-	uint16_t tmp;
-	for(tmp=0; tmp<0xffff; tmp++);
+	GPIO_SDx_Init();
+	COMP1_Init();
+
+	TIM2_Init(1, 999);
+	TIM2_PWM_Start();
+
+	Current_State = 1;
+
+	while(1);
 }
 
 // Init Systick Timer
 void SysTick_Init(uint32_t LOAD)
 {
-	SysTick->VAL  &= 0x00000000;
+	SysTick->VAL  &= 0x00000000;       //  Reset Value
 	SysTick->LOAD  = LOAD;             //  SysTick Freq
     SysTick->CTRL |= 0x00000007;       //  SysTick ENABLE IRQ, CLK = SYS_CLK / 8
 }

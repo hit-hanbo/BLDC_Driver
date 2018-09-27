@@ -11,9 +11,9 @@
 /*
  * Periph - TIM2 : Output 3 Channels PWM
  *   @function TIM2_Init(uint16_t PSC)
- *   @connect  A-Phase < -Channel 1- > PA8
- *             B-Phase < -Channel 2- > PB0
- *             C-Phase < -Channel 3- > PA2
+ *   @connect  A-Phase < -Channel 1- > PA8    <D9>
+ *             B-Phase < -Channel 2- > PB0    <D3>
+ *             C-Phase < -Channel 3- > PA2    <A7>
  *   @param    Prescale
  *   @retvalue None
  */
