@@ -10,38 +10,24 @@
 #include "stm32l011xx.h"
 #include "stm32l0xx_hal_comp.h"
 
-void COMP1_IT_Init(void)
-{
-	EXTI->EMR  &= ~(1 << 21);
-	EXTI->IMR  &= ~(1 << 21);
-	EXTI->RTSR |= (1 << 21);
-	NVIC_EnableIRQ(ADC1_COMP_IRQn);
-	NVIC_SetPriority(ADC1_COMP_IRQn, 0);
-}
-
 void COMP1_Init(void)
 {
-	COMP_HandleTypeDef hcomp1;
-
 	RCC->APB2ENR |= RCC_APB2ENR_SYSCFGEN;
-	COMP1_IT_Init();
-	COMP1->CSR |= COMP_CSR_COMP1EN;      // ENABLE COMP1
-	// GPIOA Init - Analog Mode
 	RCC->IOPENR   |= RCC_IOPENR_GPIOAEN;
-	GPIOA->MODER  |= 0x00000f0f;         // PA0, PA1, PA4, PA5, Input Mode
-	GPIOA->PUPDR  &= 0xfffff0f0;         // PA0, PA1, PA4, PA5, Floating
+	GPIOA->MODER  |= 0x00000f0f;         // PA0, PA1, PA4, PA5, Analog Mode
 
-	  hcomp1.Instance = COMP1;
-	  hcomp1.Init.InvertingInput = COMP_INPUT_MINUS_DAC1_CH1;
-	  hcomp1.Init.NonInvertingInput = COMP_INPUT_PLUS_IO1;
-	  hcomp1.Init.LPTIMConnection = COMP_LPTIMCONNECTION_DISABLED;
-	  hcomp1.Init.OutputPol = COMP_OUTPUTPOL_NONINVERTED;
-	  hcomp1.Init.Mode = COMP_POWERMODE_ULTRALOWPOWER;
-	  hcomp1.Init.WindowMode = COMP_WINDOWMODE_DISABLE;
-	  hcomp1.Init.TriggerMode = COMP_TRIGGERMODE_IT_RISING;
+	EXTI->EMR  |= (1 << 21);
+	EXTI->IMR  |= (1 << 21);
+	EXTI->FTSR |= (1 << 21);
 
-	  HAL_COMP_Init(&hcomp1);
+	COMP1->CSR &= ~((1 << 15) | (1 << 12) | (1 << 8));
+	COMP_A_PHASE;
+
+	NVIC_EnableIRQ(ADC1_COMP_IRQn);
+	NVIC_SetPriority(ADC1_COMP_IRQn, 0);
+	COMP1->CSR |= 0x01;
 }
+
 
 /*
  *  @Brief  Get Compare Result

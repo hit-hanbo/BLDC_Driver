@@ -33,6 +33,7 @@ void Bridge_C_B(void);
 void Bridge_B_A(void);
 void Bridge_B_C(void);
 void Bridge_C_A(void);
+void delay(void);
 
 void Change_Phase(void);
 

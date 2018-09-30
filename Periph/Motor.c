@@ -16,6 +16,12 @@ extern uint8_t Current_State;
  *   SD3 < -- > PA12  <D2>
  */
 
+void delay(void)
+{
+	uint16_t i=0xfff;
+	while(i--);
+}
+
 void GPIO_SDx_Init(void)
 {
 	/* GPIOB / GPIOC Init */
@@ -38,56 +44,68 @@ void GPIO_SDx_Init(void)
 
 void Bridge_A_B(void)
 {
+	COMP_OFF;
 	A_PHASE_ON;
 	PWM_A_ON;
 	B_PHASE_LOW_ON;
 	C_PHASE_OFF;
 	COMP_C_PHASE;
+	COMP_ON;
 }
 
 void Bridge_B_C(void)
 {
+	COMP_OFF;
 	B_PHASE_ON;
 	PWM_B_ON;
 	C_PHASE_LOW_ON;
 	A_PHASE_OFF;
 	COMP_A_PHASE;
+	COMP_ON;
 }
 
 void Bridge_C_A(void)
 {
+	COMP_OFF;
 	C_PHASE_ON;
 	PWM_C_ON;
 	A_PHASE_LOW_ON;
 	B_PHASE_OFF;
 	COMP_B_PHASE;
+	COMP_ON;
 }
 
 void Bridge_A_C(void)
 {
+	COMP_OFF;
 	A_PHASE_ON;
 	PWM_A_ON;
 	C_PHASE_LOW_ON;
 	B_PHASE_OFF;
 	COMP_B_PHASE;
+	COMP_ON;
 }
 
 void Bridge_C_B(void)
 {
+	COMP_OFF;
 	C_PHASE_ON;
 	PWM_C_ON;
 	B_PHASE_LOW_ON;
 	A_PHASE_OFF;
 	COMP_A_PHASE;
+	COMP_ON;
 }
 
 void Bridge_B_A(void)
 {
+	COMP_OFF;
 	B_PHASE_ON;
 	PWM_B_ON;
 	A_PHASE_LOW_ON;
 	C_PHASE_OFF;
 	COMP_C_PHASE;
+	COMP_ON;
 }
 
 // Change Phase
@@ -107,6 +125,8 @@ void Change_Phase(void)
 
 void ADC1_COMP_IRQHandler(void)
 {
+	/* Clear IT Flag*/
+	EXTI->PR |= (1 << 21);
 	/* Change ENABLE Phase */
 	/* Rewrite Status Flag */
 	LD3_TOGGLE;

@@ -22,6 +22,7 @@ void SysTick_Init(uint32_t LOAD);
 
 int main(void)
 {
+	uint8_t i;
 	SysTick_Init(50000);
 	LED_Init();
 
@@ -32,7 +33,11 @@ int main(void)
 	TIM2_PWM_Start();
 
 	Current_State = 1;
-
+	for(i=0;i<120;i++)
+	{
+		delay();
+		Change_Phase();
+	}
 	while(1);
 }
 
@@ -49,5 +54,6 @@ void SysTick_Handler(void)
 	/*
 	 * Place Holder For SysTick Handler
 	 */
+	// Change_Phase();
 }
 
