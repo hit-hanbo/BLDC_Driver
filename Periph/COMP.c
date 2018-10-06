@@ -8,7 +8,7 @@
 
 #include "COMP.h"
 #include "stm32l011xx.h"
-#include "stm32l0xx_hal_comp.h"
+#include "core_cm0plus.h"
 
 void COMP1_Init(void)
 {
@@ -23,7 +23,6 @@ void COMP1_Init(void)
 	COMP1->CSR &= ~((1 << 15) | (1 << 12) | (1 << 8));
 	COMP_A_PHASE;
 
-	NVIC_EnableIRQ(ADC1_COMP_IRQn);
 	NVIC_SetPriority(ADC1_COMP_IRQn, 0);
 	COMP1->CSR |= 0x01;
 }

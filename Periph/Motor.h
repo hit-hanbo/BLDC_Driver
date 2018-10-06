@@ -12,13 +12,16 @@
 #define PWM_A_ON  TIM2->CCR1 = 250
 #define PWM_B_ON  TIM2->CCR2 = 250
 #define PWM_C_ON  TIM2->CCR3 = 250
+#define PWM_A_OFF TIM2->CCR1 = 0
+#define PWM_B_OFF TIM2->CCR2 = 0
+#define PWM_C_OFF TIM2->CCR3 = 0
 
 #define A_PHASE_ON     GPIOB->ODR |= (1 << 7)
-#define A_PHASE_OFF    GPIOB->ODR &= ~(1 << 7)
+#define A_PHASE_OFF    { GPIOB->ODR &= ~(1 << 7);  PWM_A_OFF; }
 #define B_PHASE_ON     GPIOA->ODR |= (1 << 11)
-#define B_PHASE_OFF    GPIOA->ODR &= ~(1 << 11)
+#define B_PHASE_OFF    { GPIOA->ODR &= ~(1 << 11); PWM_B_OFF; }
 #define C_PHASE_ON     GPIOA->ODR |= (1 << 12)
-#define C_PHASE_OFF    GPIOA->ODR &= ~(1 << 12)
+#define C_PHASE_OFF    { GPIOA->ODR &= ~(1 << 12); PWM_C_OFF; }
 
 #define A_PHASE_LOW_ON  { A_PHASE_ON; TIM2->CCR1 = 0x0000; }
 #define B_PHASE_LOW_ON  { B_PHASE_ON; TIM2->CCR2 = 0x0000; }
@@ -36,5 +39,6 @@ void Bridge_C_A(void);
 void delay(void);
 
 void Change_Phase(void);
+void Fake_Change_Phase(void);
 
 #endif /* MOTOR_H_ */
