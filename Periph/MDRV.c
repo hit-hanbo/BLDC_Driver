@@ -176,13 +176,15 @@ void ADC1_COMP_IRQHandler(void)
 void COMPARE_Init(void)
 {
 	RCC->IOPENR    |= RCC_IOPENR_GPIOAEN;
-	GPIOA->MODER   &= ~((0x3 << 8) | (0x03 << 2) | (0x03 << 0));
-									// PA0 PA1 PA4 -- Input Mode
-	GPIOA->OTYPER  |= (1 << 0) | (1 << 4) | (1 << 5);
+	GPIOA->MODER   &= ~(0x3f << 10);
+									// PA5 PA6 PA7 -- Input Mode
+	GPIOA->OTYPER  |= (0x3 << 5);
 									// Open-Drain
-	GPIOA->OSPEEDR |= (0x03 << 8) | (0x03 << 2 ) | (0x03 << 0);
+	GPIOA->OSPEEDR |= (0x3f << 10);
 									// Very-High Speed
 	SYSCFG->EXTICR[1] &= ~(0x0000fff0);   // EXTI5/6/7 <--> PA5/6/7
+	NVIC_EnableIRQ(EXTI4_15_IRQn);
+	NVIC_SetPriority(EXTI4_15_IRQn, 0);
 }
 
 uint8_t COMPARE_Get_Val(void)
@@ -197,6 +199,7 @@ uint8_t COMPARE_Get_Val(void)
 
 void EXTI4_15_IRQHandler(void)
 {
+	EXTI->PR |= (0x07 << 5);
 	uint8_t sensor;
 	do
 	{
@@ -281,5 +284,5 @@ void EXTI4_15_IRQHandler(void)
 	}while( ((COMPARE_Get_Val() == 0) && (sensor == 1)) ||
 			((COMPARE_Get_Val() == 1) && (sensor == 0))
 		);
-
+	LD3_TOGGLE;
 }

@@ -41,14 +41,14 @@
 #define SENSE_C_OFF  EXTI->IMR &= ~(1 << 7)
 
 #define SENSE_A       { SENSE_A_ON; SENSE_B_OFF; SENSE_C_OFF; }
-#define SENSE_A_INT_F { EXTI->FTSR |= (1 << 5); EXTI->RTSR &= ~(1 << 5); }
-#define SENSE_A_INT_R { EXTI->RTSR |= (1 << 5); EXTI->FTSR &= ~(1 << 5); }
+#define SENSE_A_INT_R { EXTI->FTSR |= (1 << 5); EXTI->RTSR &= ~(1 << 5); }
+#define SENSE_A_INT_F { EXTI->RTSR |= (1 << 5); EXTI->FTSR &= ~(1 << 5); }
 #define SENSE_B       { SENSE_B_ON; SENSE_A_OFF; SENSE_C_OFF; }
-#define SENSE_B_INT_F { EXTI->FTSR |= (1 << 6); EXTI->RTSR &= ~(1 << 6); }
-#define SENSE_B_INT_R { EXTI->RTSR |= (1 << 6); EXTI->FTSR &= ~(1 << 6); }
+#define SENSE_B_INT_R { EXTI->FTSR |= (1 << 6); EXTI->RTSR &= ~(1 << 6); }
+#define SENSE_B_INT_F { EXTI->RTSR |= (1 << 6); EXTI->FTSR &= ~(1 << 6); }
 #define SENSE_C       { SENSE_C_ON; SENSE_A_OFF; SENSE_B_OFF; }
-#define SENSE_C_INT_F { EXTI->FTSR |= (1 << 7); EXTI->RTSR &= ~(1 << 7); }
-#define SENSE_C_INT_R { EXTI->RTSR |= (1 << 7); EXTI->FTSR &= ~(1 << 7); }
+#define SENSE_C_INT_R { EXTI->FTSR |= (1 << 7); EXTI->RTSR &= ~(1 << 7); }
+#define SENSE_C_INT_F { EXTI->RTSR |= (1 << 7); EXTI->FTSR &= ~(1 << 7); }
 #define SENSE_OFF      EXTI->IMR &= ~((1 << 5) | (1 << 6) | (1 << 7))
 
 #define SENSE_A_VAL  ( GPIOA->IDR & (1 << 5) )

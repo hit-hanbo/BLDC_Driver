@@ -38,9 +38,17 @@ int main(void)
 
 	for(j=0;j<1200;j++)
 	{
-		for(i=0; i<0xfff<<1;i++);
 		Fake_Change_Phase();
+		Delay_ms(1000);
+		if(j == 900)
+		{
+			EXTI->IMR |= (0x07 << 5);
+			SENSE_A_INT_F;
+			SENSE_B_INT_F;
+			SENSE_C_INT_F;
+		}
 	}
+
 	while(1);
 }
 
