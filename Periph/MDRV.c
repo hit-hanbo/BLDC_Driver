@@ -166,3 +166,4 @@ void ADC1_COMP_IRQHandler(void)
 			((COMP1_Get_Value() == 1) && (sensor == 0))
 		);
 }
+

@@ -24,7 +24,6 @@
 #define COMP_RISING_INT  { EXTI->FTSR |= (1 << 21); EXTI->RTSR &= ~(1 << 21); }
 
 // TIM Option
-#define PWM_OFF      TIM2->CR1 &= ~0x01
 #define PWM_A_ON(X)  TIM2->CCR1 = X
 #define PWM_A_OFF    TIM2->CCR1 = 0
 #define PWM_B_ON(X)  TIM2->CCR2 = X

@@ -60,19 +60,12 @@ void COMP1_Init(void)
  * */
 uint8_t COMP1_Get_Value(void)
 {
-	uint32_t tmp, INV;
+	uint32_t tmp;
 	tmp = COMP1->CSR & (0x40000000);
-	INV = COMP1->CSR & COMP_CSR_COMP1POLARITY;
-	if(tmp == 0)
-	{
-		if(INV) return 1;
-		else    return 0;
-	}
+	if(tmp == 0x00000000U)
+		return 0;
 	else
-	{
-		if(INV) return 0;
-		else    return 1;
-	}
+		return 1;
 }
 
 /*
@@ -131,7 +124,7 @@ void TIM2_Init(uint16_t PSC, uint16_t ARR)
 	GPIOB->OTYPER &= ~0x01;                 // GPIOB0 PP
 	GPIOB->OSPEEDR|= 0x03;                  // GPIOB0 Very High
 	GPIOB->PUPDR  |= 0x01;
-	GPIOB->AFR[0] |= 0x2;                   // GPIOB0 TIM2_CH2
+	GPIOB->AFR[0] |= 0x2;                   // PB0 <--> TIM2_CH2
 	TIM2->CR1 |= 0x01;                      // ENABLE TIM2_Base
 }
 /* @Brief: ENABLE or DISABLE TIM2_ PWM_CHANNEL 1~3
