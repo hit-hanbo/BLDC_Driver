@@ -59,7 +59,7 @@ uint8_t BLDC_Start(void)
 	while(1)
 	{
 		for(i=0; i<timer; i++)
-			Delay_us(100);
+			Delay_us(200);
 		timer -= timer/15 + 1;
 		if(timer < 25)
 			return 1;
@@ -167,3 +167,119 @@ void ADC1_COMP_IRQHandler(void)
 		);
 }
 
+
+/*  @Brief: Compare Unit Init
+ *  @Conne: PA0 <--> PHASE-A
+ *  		PA1 <--> PHASE-B
+ *  		PA4 <--> PHASE-C
+ */
+void COMPARE_Init(void)
+{
+	RCC->IOPENR    |= RCC_IOPENR_GPIOAEN;
+	GPIOA->MODER   &= ~((0x3 << 8) | (0x03 << 2) | (0x03 << 0));
+									// PA0 PA1 PA4 -- Input Mode
+	GPIOA->OTYPER  |= (1 << 0) | (1 << 4) | (1 << 5);
+									// Open-Drain
+	GPIOA->OSPEEDR |= (0x03 << 8) | (0x03 << 2 ) | (0x03 << 0);
+									// Very-High Speed
+	SYSCFG->EXTICR[1] &= ~(0x0000fff0);   // EXTI5/6/7 <--> PA5/6/7
+}
+
+uint8_t COMPARE_Get_Val(void)
+{
+	uint32_t tmp;
+	tmp = SENSE_A_VAL | SENSE_B_VAL | SENSE_C_VAL;
+	if(tmp == 0)
+		return 0;
+	else
+		return 1;
+}
+
+void EXTI4_15_IRQHandler(void)
+{
+	uint8_t sensor;
+	do
+	{
+		sensor = COMPARE_Get_Val();            // Get Current VAL for COMP
+		switch(Current_State)
+		{
+			case 0: SHUTDOWN; break;           // SHUTDOWN SIGNAL
+											   // Current PHASE <-> Next PHASE
+			case 1:                            //    AH-BL             AH-CL
+				BRIDGE_AH(Duty);
+				if(sensor == 1)
+				{
+					BRIDGE_CL;
+					SENSE_B;
+					SENSE_B_INT_F;
+					Current_State ++;
+				}
+				else
+					BRIDGE_BL;                 // Software Filter
+				break;
+			case 2:                            //    AH-CL             BH-CL
+				BRIDGE_CL;
+				if(sensor == 0)
+				{
+					BRIDGE_BH(Duty);
+					SENSE_A;
+					SENSE_A_INT_R;
+					Current_State ++;
+				}
+				else
+					BRIDGE_AH(Duty);
+				break;
+			case 3:                            //    BH-CL             BH-AL
+				BRIDGE_BH(Duty);
+				if(sensor == 1)
+				{
+					BRIDGE_AL;
+					SENSE_C;
+					SENSE_C_INT_F;
+					Current_State ++;
+				}
+				else
+					BRIDGE_CL;
+				break;
+			case 4:                            //    BH-AL             CH-AL
+				BRIDGE_AL;
+				if(sensor == 0)
+				{
+					BRIDGE_CH(Duty);
+					SENSE_B;
+					SENSE_B_INT_R;
+					Current_State ++;
+				}
+				else
+					BRIDGE_BH(Duty);
+				break;
+			case 5:                          //    CH-AL             CH-BL
+				BRIDGE_CH(Duty);
+				if(sensor == 1)
+				{
+					BRIDGE_BL;
+					SENSE_A;
+					SENSE_A_INT_F;
+					Current_State ++;
+				}
+				else
+					BRIDGE_AL;
+				break;
+			case 6:                         //    CH-BL             AH-BL
+				BRIDGE_BL;
+				if(sensor == 0)
+				{
+					BRIDGE_AH(Duty);
+					SENSE_C;
+					SENSE_C_INT_R;
+					Current_State = 1;
+				}
+				else
+					BRIDGE_CH(Duty);
+				break;
+		}
+	}while( ((COMPARE_Get_Val() == 0) && (sensor == 1)) ||
+			((COMPARE_Get_Val() == 1) && (sensor == 0))
+		);
+
+}

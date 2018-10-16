@@ -1,10 +1,8 @@
 #include "stm32l0xx.h"
 #include "stm32l0xx_hal.h"
 
-#include "../Periph/BSP.h"
-#include "../Periph/COMP.h"
-#include "../Periph/Motor.h"
-#include "../Periph/TIM.h"
+#include "BSP.h"
+#include "MDRV.h"
 
 extern uint32_t Counter_Changing;
 
@@ -21,44 +19,36 @@ extern uint32_t Counter_Changing;
 uint8_t Rotate_Direct = 0;
 uint8_t Current_State = 0;
 uint8_t flag;
+uint16_t Duty;
+
 void SysTick_Init(uint32_t LOAD);
 
 int main(void)
 {
-	uint16_t i;
+	uint32_t i, j;
 	SysTick_Init(50000);
 	LED_Init();
-
-	GPIO_SDx_Init();
+	FD6288T_Init();
 
 	TIM2_Init(1, 999);
 	TIM2_PWM_Start();
+	COMPARE_Init();
 
 	Current_State = 1;
-	COMP1_Init();
 
-	for(i=0;i<1200;i++)
+	for(j=0;j<1200;j++)
 	{
-		delay();
+		for(i=0; i<0xfff<<1;i++);
 		Fake_Change_Phase();
 	}
-	NVIC_EnableIRQ(ADC1_COMP_IRQn);
 	while(1);
 }
 
-// Init Systick Timer
-void SysTick_Init(uint32_t LOAD)
-{
-	SysTick->VAL  &= 0x00000000;       //  Reset Value
-	SysTick->LOAD  = LOAD;             //  SysTick Freq
-    SysTick->CTRL |= 0x00000007;       //  SysTick ENABLE IRQ, CLK = SYS_CLK / 8
-}
 
 void SysTick_Handler(void)
 {
 	/*
 	 * Place Holder For SysTick Handler
 	 */
-	// Change_Phase();
 }
 
